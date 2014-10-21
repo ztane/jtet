@@ -3,11 +3,17 @@ package com.anttipatterns.jtet.request;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.anttipatterns.jtet.adapter.IAdaptable;
+import com.anttipatterns.jtet.props.IPropSupport;
+import com.anttipatterns.jtet.props.Key;
+import com.anttipatterns.jtet.props.NoSuchPropertyException;
+import com.anttipatterns.jtet.props.PropStorage;
+import com.anttipatterns.jtet.response.IResponse;
 import com.anttipatterns.jtet.response.Response;
 
-public class Request {
+public class Request implements IRequest, IAdaptable, IPropSupport<Request> {
 	private String pathInfo;
-	private volatile Response response;
+	private volatile IResponse response;
 	private HttpServletResponse servletResponse;
 
 	public Request() {
@@ -33,11 +39,13 @@ public class Request {
 		}		
 	}
 
+	@Override
 	public String getPathInfo() {
 		return pathInfo;
 	}
-	
-	public Response getResponse() {
+
+	@Override
+	public IResponse getResponse() {
 		if (response == null) {
 			synchronized(this) {
 				if (response == null) {
@@ -46,5 +54,14 @@ public class Request {
 			}
 		}
 		return response;
+	}
+
+	private PropStorage<Request> props = new PropStorage<>(this);
+	public <T> T getProp(Key<Request, T> key) throws NoSuchPropertyException {
+		return props.get(key);
+	}
+
+	public <T> void setProp(Key<Request, T> key, T value) {
+		props.set(key, value);
 	}
 }

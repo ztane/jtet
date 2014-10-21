@@ -2,14 +2,14 @@ package com.anttipatterns.jtet.view;
 
 import java.lang.reflect.Method;
 
-import com.anttipatterns.jtet.request.Request;
+import com.anttipatterns.jtet.request.IRequest;
 
 
 public class View {
 	private String routeName;
 	private String renderer;
 	private Object viewCallable;
-	private IViewMapper viewMapper = new NullViewMapper();
+	private IViewCallable viewMapper = new NullViewMapper();
 	
 	public class ViewConfigurator {
 		private ViewConfigurator() { }
@@ -61,7 +61,7 @@ public class View {
 		this.routeName = routeName;
 	}
 
-	public Object handle(Request request) {
+	public Object handle(IRequest request) {
 		return this.viewMapper.handle(request);
 	}	
 }

@@ -13,8 +13,9 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
 import com.anttipatterns.jtet.config.Registry;
+import com.anttipatterns.jtet.request.IRequest;
 import com.anttipatterns.jtet.request.Request;
-import com.anttipatterns.jtet.response.Response;
+import com.anttipatterns.jtet.response.IResponse;
 import com.anttipatterns.jtet.route.Route;
 import com.anttipatterns.jtet.view.View;
 
@@ -32,7 +33,7 @@ public class Application {
 		protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 				throws ServletException, IOException {
 			
-			Request request = new Request(req, resp);
+			IRequest request = new Request(req, resp);
 			Route r = registry.getMatchingRoute(request);
 			Iterator<View> i = r.getViewIterator();
 			while (i.hasNext()) {
@@ -40,7 +41,7 @@ public class Application {
 				Object returnValue = v.handle(request);
 				
 				if (returnValue != null && returnValue instanceof String) {
-					Response response = request.getResponse();
+					IResponse response = request.getResponse();
 					response.setBody((String)returnValue);
 					response.writeTo(resp);
 				}

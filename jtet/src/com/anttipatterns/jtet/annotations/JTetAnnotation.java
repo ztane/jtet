@@ -5,5 +5,5 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.ANNOTATION_TYPE)
 public @interface JTetAnnotation {
-	public static final String NULL = "JTet magic null value for annotations";
+	public static final String NULL = "\0Unset value\0";
 }

@@ -3,9 +3,7 @@ package com.anttipatterns.jtet.config;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;
@@ -16,14 +14,16 @@ import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 
 import com.anttipatterns.jtet.Application;
+import com.anttipatterns.jtet.adapter.IAdaptable;
 import com.anttipatterns.jtet.annotations.JTetAnnotation;
 import com.anttipatterns.jtet.route.Route;
 import com.anttipatterns.jtet.route.Route.RouteConfigurator;
 import com.anttipatterns.jtet.view.View;
 import com.anttipatterns.jtet.view.View.ViewConfigurator;
 import com.anttipatterns.jtet.view.ViewConfig;
+import com.anttipatterns.jtet.view.ViewConfigs;
 
-public class Configurator {
+public class Configurator implements IAdaptable {
 	private List<Route> uncommittedRoutes = new ArrayList<>();
 	private List<View> uncommittedViews = new ArrayList<>();
 	private boolean committed = true;
@@ -80,21 +80,29 @@ public class Configurator {
 	     	.setUrls(ClasspathHelper.forPackage(thePackage))
 	     	.setScanners(new SubTypesScanner(), new TypeAnnotationsScanner(), new MethodAnnotationsScanner()));
 
-	     Collection<Method> views = reflections.getMethodsAnnotatedWith(ViewConfig.class);
+	     Collection<Method> views = reflections.getMethodsAnnotatedWith(ViewConfigs.class);
 	     for (Method m: views) {
-	    	 ViewConfig vc = m.getAnnotation(ViewConfig.class);
-	    	 ViewConfigurator c = addView(m);
+	    	 ViewConfigs vcs = m.getAnnotation(ViewConfigs.class);
+	    	 for (ViewConfig vc: vcs.value()) {
+	    		 addView(m, vc);
+	    	 }	
+	     }
 
-	    	 if (vc.renderer() != JTetAnnotation.NULL) {
-	    		 c.renderer(vc.renderer());
-	    	 }
-	    	 
-	    	 if (vc.routeName() != JTetAnnotation.NULL) {
-	    		 c.routeName(vc.routeName());
-	    	 }
-
+	     views = reflections.getMethodsAnnotatedWith(ViewConfig.class);
+	     for (Method m: views) {
+    		 addView(m, m.getAnnotation(ViewConfig.class));
 	     }
 	}
+
+	private void addView(Method m, ViewConfig vc) {
+	   	 ViewConfigurator c = addView(m);
 	
-	
+	   	 if (vc.renderer() != JTetAnnotation.NULL) {
+	   		 c.renderer(vc.renderer());
+	   	 }
+	   	 
+	   	 if (vc.routeName() != JTetAnnotation.NULL) {
+	   		 c.routeName(vc.routeName());
+	   	 }
+	}
 }

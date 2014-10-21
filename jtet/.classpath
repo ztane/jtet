@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/jtet-requirements"/>
 	<classpathentry kind="lib" path="/jtet-requirements/lib/guava-16.0.1.jar"/>
@@ -14,5 +15,6 @@
 	<classpathentry kind="lib" path="/jtet-requirements/lib/slf4j-simple-1.7.6.jar"/>
 	<classpathentry kind="lib" path="/jtet-requirements/lib/javax.servlet-api-3.1.0.jar" sourcepath="/jtet-requirements/lib/javax.servlet-api-3.1.0-sources.jar"/>
 	<classpathentry kind="lib" path="/jtet-requirements/lib/javassist-3.12.1.GA.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

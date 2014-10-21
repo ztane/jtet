@@ -1,13 +1,12 @@
 package com.anttipatterns.jtet.config;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 
-import com.anttipatterns.jtet.request.Request;
+import com.anttipatterns.jtet.request.IRequest;
 import com.anttipatterns.jtet.route.NoSuchRouteException;
 import com.anttipatterns.jtet.route.Route;
 import com.anttipatterns.jtet.view.View;
@@ -60,7 +59,7 @@ public class Registry {
 		views.remove(v);
 	}
 
-	public Route getMatchingRoute(Request req) {
+	public Route getMatchingRoute(IRequest req) {
 		String pathInfo = req.getPathInfo();
 		for (Route r: routes) {
 			Matcher m = r.matchesUrl(pathInfo);
