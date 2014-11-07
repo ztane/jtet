@@ -1,6 +1,6 @@
 package com.anttipatterns.jtet.ca;
 
-public class ComponentLookupException extends Exception {
+public class ComponentLookupException extends RuntimeException {
 	private static final long serialVersionUID = 1184665841111136023L;
 
 	private String name;

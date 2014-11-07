@@ -1,143 +1,244 @@
 package com.anttipatterns.jtet.ca;
 
-import junit.framework.TestCase;
+import static com.anttipatterns.jtet.ca.ComponentRegistry.argTypes;
+import static com.anttipatterns.jtet.ca.ComponentRegistry.arguments;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
+import java.io.Serializable;
+import java.util.AbstractMap;
+import java.util.AbstractMap.SimpleEntry;
+
+import org.junit.Before;
 import org.junit.Test;
 
-public class ComponentRegistryTest extends TestCase {
-	private ComponentRegistry registry;
-	private C1 c1;
-	private C2 c2;
+import com.anttipatterns.jtet.ca.ComponentRegistry.ArgType;
+import com.anttipatterns.jtet.ca.ComponentRegistry.RegistrationKey;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+public class ComponentRegistryTest {	
+	private ComponentRegistry componentRegistry;
 
-		c1 = new C1();
-		c2 = new C2();
-
-		registry = new ComponentRegistry();
+	@Before
+	public void setUp() {
+		componentRegistry = new ComponentRegistry();
 	}
 	
 	@Test
-	public void testAdapterKeys() {
-		assertEquals(
-			ComponentRegistry.key(String.class, "foo"),
-			ComponentRegistry.key(String.class, "fo" + "o")
+	public void simpleAreAssignableFrom() {
+		ArgType to = argTypes(Object.class);
+		ArgType from = argTypes(String.class);
+		
+		assertTrue(to.areAssignableFrom(from));
+		assertFalse(from.areAssignableFrom(to));
+	}
+	
+	@Test
+	public void arityMismatch() {
+		ArgType to = argTypes(Object.class, Object.class);
+		ArgType from = argTypes(Object.class);
+
+		assertFalse(to.areAssignableFrom(from));
+		assertFalse(from.areAssignableFrom(to));
+	}
+
+	@Test
+	public void multiArgAssignable() {
+		ArgType to = argTypes(
+			Object.class, Object.class, Object.class, Object.class,
+			Object.class, Object.class, Object.class, Number.class
 		);
-
-		assertTrue(
-			!ComponentRegistry.key(String.class, "foo").equals(
-					ComponentRegistry.key(String.class, "bar"))
+		ArgType objectOnly = argTypes(
+			Object.class, Object.class, Object.class, Object.class,
+			Object.class, Object.class, Object.class, Object.class
 		);
-
-		assertTrue(
-			!ComponentRegistry.key(Integer.class, "foo").equals(
-					ComponentRegistry.key(String.class, "foo"))
+		ArgType exact = argTypes(
+			Object.class, Object.class, Object.class, Object.class,
+			Object.class, Object.class, Object.class, Number.class
 		);
+		ArgType wide = argTypes(
+			String.class, String.class, String.class, String.class,
+			Exception.class, Double.class, Double.class, Double.class
+		);
+		assertFalse(to.areAssignableFrom(objectOnly));
+		assertTrue(to.areAssignableFrom(exact));
+		assertTrue(to.areAssignableFrom(wide));
+	}
 
-		assertEquals(
-				ComponentRegistry.key(String.class, "foo").hashCode(),
-				ComponentRegistry.key(String.class, "fo" + "o").hashCode()
-			);
+	@Test
+	public void interfaceAssignable() {
+		ArgType iface = argTypes(Serializable.class);
+		ArgType cls = argTypes(Exception.class);
+		ArgType obj = argTypes(Object.class);
+		assertTrue(iface.areAssignableFrom(cls));
+		assertTrue(obj.areAssignableFrom(iface));
+		assertFalse(iface.areAssignableFrom(obj));
+	}
 
-			assertTrue(
-				ComponentRegistry.key(String.class, "foo").hashCode() !=
-						ComponentRegistry.key(String.class, "bar").hashCode()
-			);
+	class C1 {}
+	class C2 extends C1 {}
+	
+	interface I1 {}
+	interface I2 extends I1 {}
+	interface I3 {} 
+	class C3 extends C1 implements I2, I3 {}
+	
+	@Test
+	public void classCastDistances() {
+		assertEquals(0, ComponentRegistry.getCastDistance(Object.class, Object.class));
+		assertEquals(1, ComponentRegistry.getCastDistance(C2.class, C1.class));
+		assertEquals(-1, ComponentRegistry.getCastDistance(C1.class, C2.class));
 
-			assertTrue(
-				ComponentRegistry.key(Integer.class, "foo").hashCode() !=
-						ComponentRegistry.key(String.class, "foo").hashCode()
-			);
-
+		assertEquals(4, ComponentRegistry.getCastDistance(C3.class, C1.class));
+		assertEquals(-4, ComponentRegistry.getCastDistance(C1.class, C3.class));
 	}
 	
 	@Test
-	public void testSimpleAdapt() {
-		registry.registerAdapter(x -> "converted: " + x.toString(), Integer.class, String.class);
-		assertEquals("converted: 1", registry.queryAdapter(String.class, 1));
-	}
-
-	@Test
-	public void testMultipleAdapters() {
-		registry.registerAdapter(x -> "from int: " + x.toString(),  Integer.class, String.class);
-		registry.registerAdapter(x -> "from long: " + x.toString(), Long.class, String.class);
-		registry.registerAdapter(x -> (long)(42 + x),               Integer.class, Long.class);
-
-		assertEquals("from int: 42", registry.queryAdapter(String.class, 42));
-		assertEquals("from long: 42", registry.queryAdapter(String.class, 42l));
-		assertEquals(new Long(84l), registry.queryAdapter(Long.class, 42));
-		assertNull(registry.queryAdapter(Integer.class, 42l));		
-	}
-
-	@Test
-	public void testDerivedSource() {
-		registry.registerAdapter(x -> "from number: " + x.toString(), Number.class, String.class);
-		assertEquals("from number: 1", registry.queryAdapter(String.class, 1));
-		assertEquals("from number: 42", registry.queryAdapter(String.class, 42l));
-		assertEquals("from number: 1.5", registry.queryAdapter(String.class, 1.5));
-
-		assertNull(registry.queryAdapter(Integer.class, 42));
-		assertNull(registry.queryAdapter(String.class, ""));
-	}
-	
-	interface I1 {
+	public void cachedClassCastDistances() {
+		SimpleEntry<Class<?>, Class<?>> entry = new AbstractMap.SimpleEntry<>(C2.class, C1.class);
+		ComponentRegistry.distances.remove(entry);
+		assertFalse(ComponentRegistry.distances.containsKey(entry));
 		
-	}
+		assertEquals(1, ComponentRegistry.getCastDistance(C2.class, C1.class));
+		assertTrue(ComponentRegistry.distances.containsKey(entry));
 
-	interface I2 {
+		assertEquals(1, ComponentRegistry.getCastDistance(C2.class, C1.class));
+		ComponentRegistry.distances.put(entry, 42);
+		assertEquals(42, ComponentRegistry.getCastDistance(C2.class, C1.class));
 		
-	}
-
-	interface I3 {
-		
-	}
-
-	class C1 implements I1, I2 {
-		
-	}
-
-	class C2 extends C1 implements I3 {
-		
+		ComponentRegistry.distances.remove(entry);
+		assertFalse(ComponentRegistry.distances.containsKey(entry));
 	}
 	
 	@Test
-	public void testDerivedOrder() {		
-		registry.registerAdapter(
-			x -> "from I3: " + x.getClass().getSimpleName(),
-			I3.class, String.class);
-		
-		registry.registerAdapter(
-			x -> "from I2: " + x.getClass().getSimpleName(),
-			I2.class, String.class);		
-		
-		registry.registerAdapter(
-			x -> "from I1: " + x.getClass().getSimpleName(),
-			I1.class, String.class);		
-		
-		assertEquals("from I1: C1", registry.queryAdapter(String.class, c1));
-		assertEquals("from I3: C2", registry.queryAdapter(String.class, c2));
+	public void testIntCompare() {
+		assertEquals(0, ComponentRegistry.compare(
+			new int[] {1, 2, 3},
+			new int[] {1, 2, 3}
+		));
+		assertEquals(1, ComponentRegistry.compare(
+			new int[] {4, 2, 3},
+			new int[] {1, 2, 3}
+		));
+		assertEquals(-1, ComponentRegistry.compare(
+			new int[] {1, 2, 3},
+			new int[] {1, 2, 4}
+		));
+		assertEquals(1, ComponentRegistry.compare(
+			new int[] {1, 2, 4},
+			new int[] {1, 2, 1}
+		));		
+		assertEquals(-1, ComponentRegistry.compare(
+			new int[] {1, 2, 4},
+			new int[] {1, 2, 4, 5}
+		));
+		assertEquals(1, ComponentRegistry.compare(
+			new int[] {1, 2, 4, -1},
+			new int[] {1, 2, 4}
+		));
 	}
-
+	
 	@Test
-	public void testDeepDerivation() {
-		registry.registerAdapter(
-			x -> "from I1: " + x.getClass().getSimpleName(),
-			I1.class,
-			String.class
+	public void testKeys() {
+		RegistrationKey unnamedIntStringToString = new RegistrationKey(
+			String.class, argTypes(CharSequence.class, Number.class), null
 		);
 		
-		assertEquals("from I1: C2", registry.queryAdapter(String.class, c2));
+		assertTrue(unnamedIntStringToString.providesFor(
+			new RegistrationKey(String.class, 
+								argTypes(CharSequence.class, Number.class),
+								null
+			)
+		));
+		assertTrue(unnamedIntStringToString.providesFor(
+				new RegistrationKey(String.class, 
+									argTypes(CharSequence.class, Number.class),
+									""
+				)
+		));
+
+		assertFalse(unnamedIntStringToString.providesFor(
+				new RegistrationKey(String.class, 
+									argTypes(CharSequence.class, Number.class),
+									"otherName"
+				)
+		));
+
+		// return type widening
+		assertTrue(unnamedIntStringToString.providesFor(
+				new RegistrationKey(Object.class, 
+									argTypes(CharSequence.class, Number.class),
+									""
+				)
+		));
+
+		// to interface
+		assertTrue(unnamedIntStringToString.providesFor(
+				new RegistrationKey(Serializable.class, 
+									argTypes(CharSequence.class, Number.class),
+									""
+				)
+		));
+		
+		// argument downcasting
+		assertTrue(unnamedIntStringToString.providesFor(
+				new RegistrationKey(Serializable.class, 
+									argTypes(String.class, Double.class),
+									""
+				)
+		));
+
+		// arity mismatch
+		assertFalse(unnamedIntStringToString.providesFor(
+				new RegistrationKey(Serializable.class, 
+									argTypes(String.class, Double.class, Object.class),
+									""
+				)
+		));
 	}
 	
 	@Test
-	public void testComponentLookupException() {
-		try {
-			registry.getAdapter(String.class, 1);
-			assertTrue("ComponentLookupException should have been thrown", false);
-		} catch (ComponentLookupException e) {
-			
-		}
+	public void unmatchingAdapters() {
+		RegistrationKey key = new RegistrationKey(
+			Number.class, argTypes(Integer.class, String.class), "foobar");
+
+		assertFalse(key.providesFor(new RegistrationKey(
+			Number.class, argTypes(Integer.class, String.class), null)));
+
+		assertFalse(key.providesFor(new RegistrationKey(
+			Number.class, argTypes(Integer.class, String.class), "barfoo")));
+
+		assertTrue(key.providesFor(new RegistrationKey(
+			Number.class, argTypes(Integer.class, String.class), "foobar")));
+
+		// cannot downcast number to double!
+		assertFalse(key.providesFor(new RegistrationKey(
+			Double.class, argTypes(Integer.class, String.class), "foobar")));
+
+		assertFalse(key.providesFor(new RegistrationKey(
+			Number.class, argTypes(Number.class, String.class), "foobar")));
+		
+		assertFalse(key.providesFor(new RegistrationKey(
+			Number.class, argTypes(Integer.class, CharSequence.class), "foobar")));
+	}
+	
+	public String adapt(int i, String s) {
+		return s + ":" + i;
+	}
+	
+	@Test
+	public void testSimpleLookup() {
+		componentRegistry.registerAdapter(
+			String.class,
+			argTypes(Integer.class, String.class), 
+			(x, y) -> y + ":" + x
+		);
+		
+		String result = componentRegistry.queryAdapter(
+			String.class,
+			arguments(42, "foobar"),
+			null
+		);
+		assertEquals("foobar:42", result);
 	}
 }
