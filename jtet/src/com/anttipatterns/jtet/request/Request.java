@@ -64,4 +64,9 @@ public class Request implements IRequest, IAdaptable, IPropSupport<Request> {
 	public <T> void setProp(Key<Request, T> key, T value) {
 		props.set(key, value);
 	}
+
+	@Override
+	public HttpServletResponse getBackingResponse() {
+		return servletResponse;
+	}
 }

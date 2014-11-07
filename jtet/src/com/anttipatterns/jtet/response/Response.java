@@ -79,4 +79,19 @@ public class Response implements IResponse {
 	public HttpServletResponse getBackingResponse() {
 		return backingResponse;
 	}
+
+	@Override
+	public void setStatus(int i) {
+		status = i;
+	}
+
+	@Override
+	public String getBody() {
+		return body;
+	}
+
+	@Override
+	public int getStatus() {
+		return status;
+	}
 }
