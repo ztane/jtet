@@ -75,4 +75,8 @@ public class Response implements IResponse {
 	public void setContentType(String contentType) {
 		this.contentType = contentType;
 	}
+
+	public HttpServletResponse getBackingResponse() {
+		return backingResponse;
+	}
 }
