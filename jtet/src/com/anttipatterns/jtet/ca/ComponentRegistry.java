@@ -20,7 +20,7 @@ import com.anttipatterns.jtet.utils.ClassUtils;
  * 
  * @author ztane
  */
-public class ComponentRegistry {
+public class ComponentRegistry implements IComponentRegistry {
 	/**
 	 * Creates a new AdapterRegistry
 	 */
@@ -369,7 +369,7 @@ public class ComponentRegistry {
 	static class AdapterRegistration {
 		public MethodHandle handle;
 		public Adapter adapter;
-		public RegistrationKey registrationKey;
+		public RegistrationKey<AdapterRegistration> registrationKey;
 		public Object adapt(Object... arguments) {
 			try {
 				return handle.invokeWithArguments(arguments);
@@ -379,76 +379,121 @@ public class ComponentRegistry {
 		}
 	};
 
+	/* (non-Javadoc)
+	 * @see com.anttipatterns.jtet.ca.IComponentRegistry#registerAdapter(java.lang.Class, com.anttipatterns.jtet.ca.ComponentRegistry.ArgTypeArity0, com.anttipatterns.jtet.ca.ComponentRegistry.AdapterArity0)
+	 */
+	@Override
 	public <Result> void registerAdapter(
 		Class<Result> resultClass,
 		ArgTypeArity0 argTypes,
-		AdapterArity0<Result> adapter
+		AdapterArity0<Result> adapter,
+		String name
 	) {
-		doRegisterAdapter(resultClass, argTypes, adapter, null, 0);
+		doRegisterAdapter(resultClass, argTypes, adapter, name, 0);
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.anttipatterns.jtet.ca.IComponentRegistry#registerAdapter(java.lang.Class, com.anttipatterns.jtet.ca.ComponentRegistry.ArgTypeArity1, com.anttipatterns.jtet.ca.ComponentRegistry.AdapterArity1)
+	 */
+	@Override
 	public <Result, A1> void registerAdapter(
 		Class<Result> resultClass,
 		ArgTypeArity1<A1> argTypes,
-		AdapterArity1<Result, A1> adapter
+		AdapterArity1<Result, A1> adapter,
+		String name
 	) {
-		doRegisterAdapter(resultClass, argTypes, adapter, null, 1);
+		doRegisterAdapter(resultClass, argTypes, adapter, name, 1);
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.anttipatterns.jtet.ca.IComponentRegistry#registerAdapter(java.lang.Class, com.anttipatterns.jtet.ca.ComponentRegistry.ArgTypeArity2, com.anttipatterns.jtet.ca.ComponentRegistry.AdapterArity2)
+	 */
+	@Override
 	public <Result, A1, A2> void registerAdapter(
 		Class<Result> resultClass,
 		ArgTypeArity2<A1, A2> argTypes,
-		AdapterArity2<Result, A1, A2> adapter
+		AdapterArity2<Result, A1, A2> adapter,
+		String name
 	) {
-		doRegisterAdapter(resultClass, argTypes, adapter, null, 2);
+		doRegisterAdapter(resultClass, argTypes, adapter, name, 2);
 	}
 
+	/* (non-Javadoc)
+	 * @see com.anttipatterns.jtet.ca.IComponentRegistry#registerAdapter(java.lang.Class, com.anttipatterns.jtet.ca.ComponentRegistry.ArgTypeArity3, com.anttipatterns.jtet.ca.ComponentRegistry.AdapterArity3)
+	 */
+	@Override
 	public <Result, A1, A2, A3> void registerAdapter(
 		Class<Result> resultClass,
 		ArgTypeArity3<A1, A2, A3> argTypes,
-			AdapterArity3<Result, A1, A2, A3> adapter
+			AdapterArity3<Result, A1, A2, A3> adapter,
+			String name
 		) {
-		doRegisterAdapter(resultClass, argTypes, adapter, null, 3);
+		doRegisterAdapter(resultClass, argTypes, adapter, name, 3);
 	}
 
+	/* (non-Javadoc)
+	 * @see com.anttipatterns.jtet.ca.IComponentRegistry#registerAdapter(java.lang.Class, com.anttipatterns.jtet.ca.ComponentRegistry.ArgTypeArity4, com.anttipatterns.jtet.ca.ComponentRegistry.AdapterArity4)
+	 */
+	@Override
 	public <Result, A1, A2, A3, A4> void registerAdapter(
 		Class<Result> resultClass,
 		ArgTypeArity4<A1, A2, A3, A4> argTypes,
-		AdapterArity4<Result, A1, A2, A3, A4> adapter
+		AdapterArity4<Result, A1, A2, A3, A4> adapter,
+		String name
 	) {
-		doRegisterAdapter(resultClass, argTypes, adapter, null, 4);
+		doRegisterAdapter(resultClass, argTypes, adapter, name, 4);
 	}
 
+	/* (non-Javadoc)
+	 * @see com.anttipatterns.jtet.ca.IComponentRegistry#registerAdapter(java.lang.Class, com.anttipatterns.jtet.ca.ComponentRegistry.ArgTypeArity5, com.anttipatterns.jtet.ca.ComponentRegistry.AdapterArity5)
+	 */
+	@Override
 	public <Result, A1, A2, A3, A4, A5> void registerAdapter(
 		Class<Result> resultClass,
 		ArgTypeArity5<A1, A2, A3, A4, A5> argTypes,
-		AdapterArity5<Result, A1, A2, A3, A4, A5> adapter
+		AdapterArity5<Result, A1, A2, A3, A4, A5> adapter,
+		String name
 	) {
-		doRegisterAdapter(resultClass, argTypes, adapter, null, 5);
+		doRegisterAdapter(resultClass, argTypes, adapter, name, 5);
 	}
 
+	/* (non-Javadoc)
+	 * @see com.anttipatterns.jtet.ca.IComponentRegistry#registerAdapter(java.lang.Class, com.anttipatterns.jtet.ca.ComponentRegistry.ArgTypeArity6, com.anttipatterns.jtet.ca.ComponentRegistry.AdapterArity6)
+	 */
+	@Override
 	public <Result, A1, A2, A3, A4, A5, A6> void registerAdapter(
 		Class<Result> resultClass,
 		ArgTypeArity6<A1, A2, A3, A4, A5, A6> argTypes,
-		AdapterArity6<Result, A1, A2, A3, A4, A5, A6> adapter
+		AdapterArity6<Result, A1, A2, A3, A4, A5, A6> adapter,
+		String name
 	) {
-		doRegisterAdapter(resultClass, argTypes, adapter, null, 6);
+		doRegisterAdapter(resultClass, argTypes, adapter, name, 6);
 	}
 
+	/* (non-Javadoc)
+	 * @see com.anttipatterns.jtet.ca.IComponentRegistry#registerAdapter(java.lang.Class, com.anttipatterns.jtet.ca.ComponentRegistry.ArgTypeArity7, com.anttipatterns.jtet.ca.ComponentRegistry.AdapterArity7)
+	 */
+	@Override
 	public <Result, A1, A2, A3, A4, A5, A6, A7> void registerAdapter(
 		Class<Result> resultClass,
 		ArgTypeArity7<A1, A2, A3, A4, A5, A6, A7> argTypes,
-		AdapterArity7<Result, A1, A2, A3, A4, A5, A6, A7> adapter
+		AdapterArity7<Result, A1, A2, A3, A4, A5, A6, A7> adapter,
+		String name
 	) {
-		doRegisterAdapter(resultClass, argTypes, adapter, null, 7);
+		doRegisterAdapter(resultClass, argTypes, adapter, name, 7);
 	}
 
+	/* (non-Javadoc)
+	 * @see com.anttipatterns.jtet.ca.IComponentRegistry#registerAdapter(java.lang.Class, com.anttipatterns.jtet.ca.ComponentRegistry.ArgTypeArity8, com.anttipatterns.jtet.ca.ComponentRegistry.AdapterArity8)
+	 */
+	@Override
 	public <Result, A1, A2, A3, A4, A5, A6, A7, A8> void registerAdapter(
 		Class<Result> resultClass,
 		ArgTypeArity8<A1, A2, A3, A4, A5, A6, A7, A8> argTypes,
-		AdapterArity8<Result, A1, A2, A3, A4, A5, A6, A7, A8> adapter
+		AdapterArity8<Result, A1, A2, A3, A4, A5, A6, A7, A8> adapter,
+		String name
 	) {
-		doRegisterAdapter(resultClass, argTypes, adapter, null, 8);
+		doRegisterAdapter(resultClass, argTypes, adapter, name, 8);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -496,7 +541,7 @@ public class ComponentRegistry {
 			throw new RuntimeException(e);
 		}
 		
-		RegistrationKey key = new RegistrationKey(resultClass, argTypes, name);
+		RegistrationKey<AdapterRegistration> key = new RegistrationKey<>(AdapterRegistration.class, resultClass, argTypes, name);
 		AdapterRegistration registration = new AdapterRegistration();
 		registration.adapter = adapter;
 		registration.handle = handle;
@@ -510,7 +555,7 @@ public class ComponentRegistry {
 
 	private void doUnregister(Class<?> resultClass, ArgType argTypes,
 			String name) {
-		RegistrationKey key = new RegistrationKey(resultClass, argTypes, name);
+		RegistrationKey<AdapterRegistration> key = new RegistrationKey<>(AdapterRegistration.class, resultClass, argTypes, name);
 		synchronized (this) {
 			registrations.remove(key);
 			clearCaches();
@@ -518,7 +563,7 @@ public class ComponentRegistry {
 	}
 
 	private synchronized void clearCaches() {
-		noMatchingAdapters.clear();
+		noMatchingComponents.clear();
 		cache.clear();
 	}
 
@@ -533,18 +578,22 @@ public class ComponentRegistry {
 		return new Arguments(args);
 	}
 	
+	@Override
 	public <T> T queryAdapter(Class<T> targetClass, Arguments args, String name, T defaultValue) {
 		return doQueryAdapter(targetClass, args, name, defaultValue, false);
 	}
 	
+	@Override
 	public <T> T queryAdapter(Class<T> targetClass, Arguments args, T defaultValue) {
 		return doQueryAdapter(targetClass, args, "", defaultValue, false);
 	}
 	
+	@Override
 	public <T> T getAdapter(Class<T> targetClass, Arguments args, String name) {
 		return doQueryAdapter(targetClass, args, name, null, true);
 	}
 	
+	@Override
 	public <T> T getAdapter(Class<T> targetClass, Arguments args) {
 		return doQueryAdapter(targetClass, args, "", null, true);
 	}
@@ -552,7 +601,7 @@ public class ComponentRegistry {
 	private <T> T doQueryAdapter(Class<T> targetClass, Arguments args,
 		String name, T defaultValue, boolean throwOnError)
 	{
-		AdapterRegistration registration = lookup(new RegistrationKey(targetClass, ArgType.of(args), name));
+		AdapterRegistration registration = lookup(new RegistrationKey<>(AdapterRegistration.class, targetClass, ArgType.of(args), name));
 		if (registration == null) {
 			if (throwOnError) {
 				throw new ComponentLookupException(targetClass, args, name);
@@ -564,25 +613,26 @@ public class ComponentRegistry {
 		return targetClass.cast(registration.adapt(args.args));
 	}
 	
-	private Map<RegistrationKey, AdapterRegistration> registrations = new HashMap<>();
-	private Map<RegistrationKey, AdapterRegistration> cache = new HashMap<>();
-	private Set<RegistrationKey> noMatchingAdapters = new HashSet<>();
+	private Map<RegistrationKey<?>, Object> registrations = new HashMap<>();
+	private Map<RegistrationKey<?>, Object> cache = new HashMap<>();
+	private Set<RegistrationKey<?>> noMatchingComponents = new HashSet<>();
 	private class NoMatchingAdapterException extends RuntimeException { private static final long serialVersionUID = 1L; }
 	
-	private synchronized AdapterRegistration lookup(RegistrationKey lookupKey) {
-		if (noMatchingAdapters.contains(lookupKey)) {
+	@SuppressWarnings("unchecked")
+	private synchronized <T> T lookup(RegistrationKey<T> lookupKey) {
+		if (noMatchingComponents.contains(lookupKey)) {
 			return null; 
 		}
 
 		try {
-			return cache.computeIfAbsent(lookupKey, (key) -> {	
-				AdapterRegistration registration = registrations.get(key);
+			return (T)cache.computeIfAbsent(lookupKey, (key) -> {	
+				T registration = (T)registrations.get(key);
 				if (registration != null) {
 					cache.put(key, registration);
 					return registration;
 				}
 				
-				registration = findBestMatching(key);
+				registration = (T)findBestMatching(key);
 				if (registration == null) {
 					throw new NoMatchingAdapterException();
 				}
@@ -590,34 +640,40 @@ public class ComponentRegistry {
 				return registration;
 			});
 		} catch (NoMatchingAdapterException e) {
-			noMatchingAdapters.add(lookupKey);
+			noMatchingComponents.add(lookupKey);
 			return null;
 		}
 	}
 	
-	private AdapterRegistration findBestMatching(RegistrationKey key) {
-		RegistrationKey winning = null;
-		AdapterRegistration winningReg = null;
-		for (Entry<RegistrationKey, AdapterRegistration> entry: registrations.entrySet()) {
+	@SuppressWarnings("unchecked")
+	private <T> T findBestMatching(RegistrationKey<T> key) {
+		RegistrationKey<?> winning = null;
+		T winningReg = null;
+		for (Entry<RegistrationKey<?>, Object> entry: registrations.entrySet()) {
 			if (entry.getKey().providesFor(key)) {
 				if (winning == null || key.isFirstBetterMatch(entry.getKey(), winning)) {
 					winning = entry.getKey();
-					winningReg = entry.getValue();
+					winningReg = (T)entry.getValue();
 				}
 			}
 		}
 		
 		return winningReg;
 	}
-	static class RegistrationKey {
+	static class RegistrationKey<T> {
+		public final Class<T> componentType;
 		public final Class<?> targetType;
-		public final ArgType arguments;
+		public final ArgType argType;
 		public final String name;
-		public RegistrationKey(Class<?> targetType, ArgType arguments,
+		public RegistrationKey(Class<T> componentType, Class<?> targetType, ArgType arguments,
 				String name) {
 			super();
+			this.componentType = componentType;
 			this.targetType = targetType;
-			this.arguments = arguments;
+			if (arguments == null) {
+				arguments = new ArgType();
+			}
+			this.argType = arguments;
 			if (name == null) {
 				name = "";
 			}
@@ -625,15 +681,19 @@ public class ComponentRegistry {
 		}
 		
 		public boolean isFirstBetterMatch(
-				RegistrationKey first,
-				RegistrationKey second
+				RegistrationKey<?> first,
+				RegistrationKey<?> second
 		) {
-			int[] firstDistance = first.arguments.getCastDistancesTo(arguments);
-			int[] secondDistance = second.arguments.getCastDistancesTo(arguments);
+			int[] firstDistance = first.argType.getCastDistancesTo(argType);
+			int[] secondDistance = second.argType.getCastDistancesTo(argType);
 			
 			return compare(firstDistance, secondDistance) < 0;
 		}
-		public boolean providesFor(RegistrationKey key) {
+		
+		public boolean providesFor(RegistrationKey<?> key) {
+			if (key.componentType != componentType) {
+				return false;
+			}
 			// wrong number of arguments
 			if (key.argArity() != this.argArity()) {
 				return false;
@@ -648,17 +708,18 @@ public class ComponentRegistry {
 				return false;
 			}
 
-			return arguments.areAssignableFrom(key.arguments);
+			return argType.areAssignableFrom(key.argType);
 		}
 		public int argArity() {
-			return arguments.argTypes.length;
+			return argType.argTypes.length;
 		}
 		@Override
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
+			result += componentType.hashCode();
 			result = prime * result
-					+ ((arguments == null) ? 0 : arguments.hashCode());
+					+ ((argType == null) ? 0 : argType.hashCode());
 			result = prime * result + ((name == null) ? 0 : name.hashCode());
 			result = prime * result
 					+ ((targetType == null) ? 0 : targetType.hashCode());
@@ -672,11 +733,14 @@ public class ComponentRegistry {
 				return false;
 			if (getClass() != obj.getClass())
 				return false;
-			RegistrationKey other = (RegistrationKey) obj;
-			if (arguments == null) {
-				if (other.arguments != null)
+			RegistrationKey<?> other = (RegistrationKey<?>) obj;
+			if (other.componentType != this.componentType) {
+				return false;
+			}
+			if (argType == null) {
+				if (other.argType != null)
 					return false;
-			} else if (!arguments.equals(other.arguments))
+			} else if (!argType.equals(other.argType))
 				return false;
 			if (name == null) {
 				if (other.name != null)
@@ -689,6 +753,69 @@ public class ComponentRegistry {
 			} else if (!targetType.equals(other.targetType))
 				return false;
 			return true;
+		}
+	}
+
+	static class UtilityRegistration {
+		RegistrationKey<UtilityRegistration> key;
+		Object value;
+	}
+	
+	@Override
+	public <T> T getUtility(Class<T> utility) {
+		return doQueryUtility(utility, "", null, true);
+	}
+
+	@Override
+	public <T> T getUtility(Class<T> utility, String name) {
+		return doQueryUtility(utility, name, null, true);
+	}
+
+	@Override
+	public <T> T queryUtility(Class<T> utility, T defaultValue) {
+		return doQueryUtility(utility, "", defaultValue, false);
+	}
+
+	@Override
+	public <T> T queryUtility(Class<T> utility, String name, T defaultValue) {
+		return doQueryUtility(utility, name, defaultValue, false);
+	}
+
+	public <T> T doQueryUtility(Class<T> utility, String name, T defaultValue, boolean doThrow) {
+		UtilityRegistration registration = lookup(new RegistrationKey<UtilityRegistration>(UtilityRegistration.class, utility, argTypes(), ""));
+		if (registration == null && doThrow) {
+			throw new ComponentLookupException(utility, argTypes(), name);
+		}
+		
+		if (registration == null) {
+			return defaultValue;
+		}
+		
+		return utility.cast(registration.value);
+	}
+	
+	@Override
+	public <UtilityInterface> void registerUtility(
+			Class<UtilityInterface> theInterface, UtilityInterface utility,
+			String name) {
+		if (utility == null) {
+			doUnregister(theInterface, argTypes(), name);
+			return;
+		}
+
+		if (name == null) {
+			name = "";
+		}
+		
+		RegistrationKey<UtilityRegistration> key 
+			= new RegistrationKey<>(UtilityRegistration.class, theInterface, null, name);
+		UtilityRegistration registration = new UtilityRegistration();
+		registration.value = utility;
+		registration.key = key;
+		
+		synchronized (this) {
+			registrations.put(key, registration);
+			clearCaches();
 		}
 	}
 }

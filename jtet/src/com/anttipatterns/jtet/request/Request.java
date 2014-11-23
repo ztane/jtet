@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.anttipatterns.jtet.adapter.IAdaptable;
+import com.anttipatterns.jtet.config.Registry;
 import com.anttipatterns.jtet.props.IPropSupport;
 import com.anttipatterns.jtet.props.Key;
 import com.anttipatterns.jtet.props.NoSuchPropertyException;
@@ -11,20 +12,23 @@ import com.anttipatterns.jtet.props.PropStorage;
 import com.anttipatterns.jtet.response.IResponse;
 import com.anttipatterns.jtet.response.Response;
 
-public class Request implements IRequest, IAdaptable, IPropSupport<Request> {
+public class Request implements IRequest, IAdaptable {
 	private String pathInfo;
 	private volatile IResponse response;
 	private HttpServletResponse servletResponse;
+	private Registry registry;
 
-	public Request() {
-		
+	public Request(Registry registry) {
+		this.registry = registry;
 	}
 	
-	public Request(HttpServletRequest req) {
+	public Request(Registry registry, HttpServletRequest req) {
+		this.registry = registry;
 		setFromRequest(req);
 	}
 
-	public Request(HttpServletRequest req, HttpServletResponse resp) {
+	public Request(Registry registry, HttpServletRequest req, HttpServletResponse resp) {
+		this.registry = registry;
 		setFromRequest(req);
 		this.servletResponse = resp;
 	}
@@ -56,17 +60,22 @@ public class Request implements IRequest, IAdaptable, IPropSupport<Request> {
 		return response;
 	}
 
-	private PropStorage<Request> props = new PropStorage<>(this);
-	public <T> T getProp(Key<Request, T> key) throws NoSuchPropertyException {
+	private PropStorage<IRequest> props = new PropStorage<>(this);
+	public <T> T getProp(Key<IRequest, T> key) throws NoSuchPropertyException {
 		return props.get(key);
 	}
 
-	public <T> void setProp(Key<Request, T> key, T value) {
+	public <T> void setProp(Key<IRequest, T> key, T value) {
 		props.set(key, value);
 	}
 
 	@Override
 	public HttpServletResponse getBackingResponse() {
 		return servletResponse;
+	}
+
+	@Override
+	public Registry getRegistry() {
+		return registry;
 	}
 }

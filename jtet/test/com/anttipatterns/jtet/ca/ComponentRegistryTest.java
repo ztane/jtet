@@ -13,6 +13,7 @@ import java.util.AbstractMap.SimpleEntry;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.anttipatterns.jtet.ca.ComponentRegistry.AdapterRegistration;
 import com.anttipatterns.jtet.ca.ComponentRegistry.ArgType;
 import com.anttipatterns.jtet.ca.ComponentRegistry.RegistrationKey;
 
@@ -140,25 +141,25 @@ public class ComponentRegistryTest {
 	
 	@Test
 	public void testKeys() {
-		RegistrationKey unnamedIntStringToString = new RegistrationKey(
+		RegistrationKey<AdapterRegistration> unnamedIntStringToString = makeAdapterRegistrationKey(
 			String.class, argTypes(CharSequence.class, Number.class), null
 		);
 		
 		assertTrue(unnamedIntStringToString.providesFor(
-			new RegistrationKey(String.class, 
+			makeAdapterRegistrationKey(String.class, 
 								argTypes(CharSequence.class, Number.class),
 								null
 			)
 		));
 		assertTrue(unnamedIntStringToString.providesFor(
-				new RegistrationKey(String.class, 
+				makeAdapterRegistrationKey(String.class, 
 									argTypes(CharSequence.class, Number.class),
 									""
 				)
 		));
 
 		assertFalse(unnamedIntStringToString.providesFor(
-				new RegistrationKey(String.class, 
+				makeAdapterRegistrationKey(String.class, 
 									argTypes(CharSequence.class, Number.class),
 									"otherName"
 				)
@@ -166,7 +167,7 @@ public class ComponentRegistryTest {
 
 		// return type widening
 		assertTrue(unnamedIntStringToString.providesFor(
-				new RegistrationKey(Object.class, 
+				makeAdapterRegistrationKey(Object.class, 
 									argTypes(CharSequence.class, Number.class),
 									""
 				)
@@ -174,7 +175,7 @@ public class ComponentRegistryTest {
 
 		// to interface
 		assertTrue(unnamedIntStringToString.providesFor(
-				new RegistrationKey(Serializable.class, 
+				makeAdapterRegistrationKey(Serializable.class, 
 									argTypes(CharSequence.class, Number.class),
 									""
 				)
@@ -182,7 +183,7 @@ public class ComponentRegistryTest {
 		
 		// argument downcasting
 		assertTrue(unnamedIntStringToString.providesFor(
-				new RegistrationKey(Serializable.class, 
+				makeAdapterRegistrationKey(Serializable.class, 
 									argTypes(String.class, Double.class),
 									""
 				)
@@ -190,7 +191,7 @@ public class ComponentRegistryTest {
 
 		// arity mismatch
 		assertFalse(unnamedIntStringToString.providesFor(
-				new RegistrationKey(Serializable.class, 
+				makeAdapterRegistrationKey(Serializable.class, 
 									argTypes(String.class, Double.class, Object.class),
 									""
 				)
@@ -199,29 +200,34 @@ public class ComponentRegistryTest {
 	
 	@Test
 	public void unmatchingAdapters() {
-		RegistrationKey key = new RegistrationKey(
+		RegistrationKey<AdapterRegistration> key = makeAdapterRegistrationKey(
 			Number.class, argTypes(Integer.class, String.class), "foobar");
 
-		assertFalse(key.providesFor(new RegistrationKey(
+		assertFalse(key.providesFor(makeAdapterRegistrationKey(
 			Number.class, argTypes(Integer.class, String.class), null)));
 
-		assertFalse(key.providesFor(new RegistrationKey(
+		assertFalse(key.providesFor(makeAdapterRegistrationKey(
 			Number.class, argTypes(Integer.class, String.class), "barfoo")));
 
-		assertTrue(key.providesFor(new RegistrationKey(
+		assertTrue(key.providesFor(makeAdapterRegistrationKey(
 			Number.class, argTypes(Integer.class, String.class), "foobar")));
 
 		// cannot downcast number to double!
-		assertFalse(key.providesFor(new RegistrationKey(
+		assertFalse(key.providesFor(makeAdapterRegistrationKey(
 			Double.class, argTypes(Integer.class, String.class), "foobar")));
 
-		assertFalse(key.providesFor(new RegistrationKey(
+		assertFalse(key.providesFor(makeAdapterRegistrationKey(
 			Number.class, argTypes(Number.class, String.class), "foobar")));
 		
-		assertFalse(key.providesFor(new RegistrationKey(
+		assertFalse(key.providesFor(makeAdapterRegistrationKey(
 			Number.class, argTypes(Integer.class, CharSequence.class), "foobar")));
 	}
 	
+	private  RegistrationKey<AdapterRegistration> makeAdapterRegistrationKey(Class<?> target,
+			ArgType argTypes, String name) {
+		return new RegistrationKey<>(AdapterRegistration.class, target, argTypes, name);
+	}
+
 	public String adapt(int i, String s) {
 		return s + ":" + i;
 	}
@@ -231,7 +237,8 @@ public class ComponentRegistryTest {
 		componentRegistry.registerAdapter(
 			String.class,
 			argTypes(Integer.class, String.class), 
-			(x, y) -> y + ":" + x
+			(x, y) -> y + ":" + x,
+			null
 		);
 		
 		String result = componentRegistry.queryAdapter(

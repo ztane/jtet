@@ -1,9 +1,10 @@
 package com.anttipatterns.jtet.props;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class PropStorage<Target> {
-	private Map<Key<Target, ?>, Object> map;
+	private Map<Key<Target, ?>, Object> map = new HashMap<Key<Target,?>, Object>();
 	private Object container;
 	
 	public PropStorage(Target container) {

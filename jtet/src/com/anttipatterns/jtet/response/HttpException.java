@@ -2,7 +2,7 @@ package com.anttipatterns.jtet.response;
 
 import com.anttipatterns.jtet.request.IRequest;
 
-public class HttpException extends Exception implements IResponse {
+public class HttpException extends RuntimeException implements IResponse {
 	private static final long serialVersionUID = 1L;
 	protected IRequest request;
 	private String body;

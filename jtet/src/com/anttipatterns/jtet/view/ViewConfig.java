@@ -15,6 +15,7 @@ import com.anttipatterns.jtet.annotations.JTetAnnotation;
 @Target({ ElementType.METHOD, ElementType.CONSTRUCTOR })
 @JTetAnnotation
 public @interface ViewConfig { 
-	String routeName() default JTetAnnotation.NULL;
-    String renderer()  default JTetAnnotation.NULL;
+	String routeName()   default "";
+    String renderer()    default "";
+    String contentType() default "text/html";
 }
