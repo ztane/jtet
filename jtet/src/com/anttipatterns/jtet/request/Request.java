@@ -5,7 +5,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.anttipatterns.jtet.adapter.IAdaptable;
 import com.anttipatterns.jtet.config.Registry;
-import com.anttipatterns.jtet.props.IPropSupport;
 import com.anttipatterns.jtet.props.Key;
 import com.anttipatterns.jtet.props.NoSuchPropertyException;
 import com.anttipatterns.jtet.props.PropStorage;
